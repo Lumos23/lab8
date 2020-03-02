@@ -4,6 +4,7 @@
                                 Part 2
  *)
 
+       
 (* Objective:
 
 This lab practices concepts of functors. 
@@ -93,7 +94,6 @@ will act as an absrtaction barrier to prevent the extra functions from
 leaking out of the module.)
 ......................................................................*)
 
-
 module MakeStack (Element: SERIALIZE) : (STACK with type element = Element.t) =
   struct
     exception Empty
@@ -136,6 +136,10 @@ module MakeStack (Element: SERIALIZE) : (STACK with type element = Element.t) =
 Exercise 1B: Now, make a module `IntStack` by applying the functor
 that you just defined to an appropriate module for serializing integers.
 ......................................................................*)
+
+(* In the following solution, we are explicit about all module types,
+   while providing appropriate sharing constraints. *)
+  
 module IntSerialize : (SERIALIZE with type t = int) =
   struct
     type t = int
@@ -144,6 +148,9 @@ module IntSerialize : (SERIALIZE with type t = int) =
 
 module IntStack : (STACK with type element = IntSerialize.t) =
   MakeStack(IntSerialize) ;;
+
+(* It might be a good exercise to drop one or another of the sharing
+   constraints, or of the module typings, and see what happens. *)
 
 (*......................................................................
 Exercise 1C: Make a module `IntStringStack` that creates a stack whose
@@ -155,11 +162,17 @@ values as strings of the form:
 where N is the int, and S is the string. For instance, a stack with
 two elements might be serialized as the string
 
-    "(1, 'pushed first'):(2, 'pushed second')"     .
+    "(1,'pushed first'):(2,'pushed second')"     .
 
 For this oversimplified serialization function, you may assume that
 the string will be made up of alphanumeric characters only.
 ......................................................................*)
+
+(* This time, we left off the typings for the modules
+   `IntStringSerialize` and `IntStringStack`. Can you add them in such
+   a way that the modules are properly abstracted but can still be
+   used to construct and manipulate stacks? *)
+    
 module IntStringSerialize =
   struct
     type t = (int * string)
@@ -169,5 +182,3 @@ module IntStringSerialize =
 
 module IntStringStack =
   MakeStack(IntStringSerialize) ;;
-
-
